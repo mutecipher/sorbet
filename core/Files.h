@@ -84,6 +84,7 @@ public:
 
     std::string_view path() const;
     std::string_view source() const;
+    std::string_view null_terminated_source() const;
     Type sourceType;
 
     bool isPayload() const;
