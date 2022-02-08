@@ -434,6 +434,7 @@ buildOptions(const vector<pipeline::semantic_extension::SemanticExtensionProvide
                                "Errors not mentioned will be silenced. "
                                "This option can be passed multiple times.",
                                cxxopts::value<vector<int>>(), "errorCode");
+    options.add_options("dev")("single-package", "Run in single-package mode", cxxopts::value<bool>());
     options.add_options("dev")("package-rbi-output", "Serialize package RBIs to folder.",
                                cxxopts::value<string>()->default_value(""));
     options.add_options("dev")("dump-package-info", "Dump package info in JSON form to the given file.",
@@ -920,6 +921,7 @@ void readOptions(Options &opts,
             }
         }
 
+        opts.singlePackage = raw["single-package"].as<bool>();
         opts.packageRBIOutput = raw["package-rbi-output"].as<string>();
         opts.dumpPackageInfo = raw["dump-package-info"].as<string>();
 

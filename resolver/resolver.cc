@@ -422,6 +422,12 @@ private:
             }
             nesting = nesting->parent;
         }
+
+        // in single-package mode, all constants will be stubbed
+        if (ctx.state.singlePackage) {
+            return true;
+        }
+
         return false;
     }
 
