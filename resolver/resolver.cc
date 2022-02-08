@@ -370,7 +370,7 @@ private:
         // If a package exports a name that does not exist only one error should appear at the
         // export site. Ignore resolution failures in the aliases/modules created by packaging to
         // avoid this resulting in duplicate errors.
-        if (!constantNameMissing && (!alreadyReported || customAutogenError) &&
+        if (!ctx.state.singlePackage && !constantNameMissing && (!alreadyReported || customAutogenError) &&
             !isPackagerMaterializedConstantRef(ctx, job)) {
             if (auto e = ctx.beginError(job.out->original.loc(), core::errors::Resolver::StubConstant)) {
                 e.setHeader("Unable to resolve constant `{}`", original.cnst.show(ctx));
@@ -421,11 +421,6 @@ private:
                 return true;
             }
             nesting = nesting->parent;
-        }
-
-        // in single-package mode, all constants will be stubbed
-        if (ctx.state.singlePackage) {
-            return true;
         }
 
         return false;

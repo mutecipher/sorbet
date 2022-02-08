@@ -35,9 +35,13 @@ string UnresolvedClassType::toStringWithTabs(const GlobalState &gs, int tabs) co
 }
 
 string UnresolvedClassType::show(const GlobalState &gs, ShowOptions options) const {
-    return fmt::format("{}::{}{}", this->scope.show(gs, options),
-                       fmt::map_join(this->names, "::", [&](const auto &el) -> string { return el.show(gs); }),
-                       options.showForRBI ? "" : " (unresolved)");
+    if (options.showForRBI) {
+        return fmt::format("{}", // this->scope.show(gs, options),
+                           fmt::map_join(this->names, "::", [&](const auto &el) -> string { return el.show(gs); }));
+    } else {
+        return fmt::format("{}::{} (unresolved)", this->scope.show(gs, options),
+                           fmt::map_join(this->names, "::", [&](const auto &el) -> string { return el.show(gs); }));
+    }
 }
 
 string UnresolvedAppliedType::toStringWithTabs(const GlobalState &gs, int tabs) const {
@@ -45,9 +49,13 @@ string UnresolvedAppliedType::toStringWithTabs(const GlobalState &gs, int tabs) 
 }
 
 string UnresolvedAppliedType::show(const GlobalState &gs, ShowOptions options) const {
-    return fmt::format("{}[{}]{}", this->klass.show(gs, options),
-                       fmt::map_join(targs, ", ", [&](auto targ) { return targ.show(gs, options); }),
-                       options.showForRBI ? "" : " (unresolved)");
+    if (options.showForRBI) {
+        return fmt::format("{}[{}]", this->klass.show(gs, options),
+                           fmt::map_join(targs, ", ", [&](auto targ) { return targ.show(gs, options); }));
+    } else {
+        return fmt::format("{}[{}] (unresolved)", this->klass.show(gs, options),
+                           fmt::map_join(targs, ", ", [&](auto targ) { return targ.show(gs, options); }));
+    }
 }
 
 string LiteralType::toStringWithTabs(const GlobalState &gs, int tabs) const {
