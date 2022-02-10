@@ -504,7 +504,7 @@ int realmain(int argc, char *argv[]) {
         }
     }
     gs->suggestUnsafe = opts.suggestUnsafe;
-    gs->singlePackage = opts.singlePackage;
+    gs->singlePackage = !opts.singlePackage.empty();
 
     logger->trace("done building initial global state");
 
@@ -726,10 +726,16 @@ int realmain(int argc, char *argv[]) {
                 return 1;
             }
 
-            auto packageFileRefs = pipeline::reserveFiles(gs, packageFiles);
-            auto packages = pipeline::index(*gs, packageFileRefs, opts, *workers, nullptr);
+            if (!opts.singlePackage.empty()) {
+                auto packageFileRefs = pipeline::reserveFiles(gs, packageFiles);
+                auto packages = pipeline::index(*gs, packageFileRefs, opts, *workers, nullptr);
+                packager::RBIGenerator::runSinglePackage(*gs, opts.singlePackage, move(packages), opts.packageRBIOutput, *workers);
+            } else {
+                auto packageFileRefs = pipeline::reserveFiles(gs, packageFiles);
+                auto packages = pipeline::index(*gs, packageFileRefs, opts, *workers, nullptr);
+                packager::RBIGenerator::run(*gs, move(packages), opts.packageRBIOutput, *workers);
+            }
 
-            packager::RBIGenerator::run(*gs, move(packages), opts.packageRBIOutput, *workers);
 #endif
         }
 
